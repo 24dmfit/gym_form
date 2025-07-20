@@ -1,15 +1,27 @@
+import os
+import json
+
+# 用來從 GOOGLE_CREDS 環境變數讀取 credentials
+creds_json = os.getenv("GOOGLE_CREDS")
+if creds_json:
+    creds_dict = json.loads(creds_json)
+else:
+    creds_dict = None
+
 from flask import Flask, render_template, request
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2 import service_account
 from datetime import datetime
 
 app = Flask(__name__)
 
 # Google Sheets API 授權範圍
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+SCOPES = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
 # 載入憑證
-creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+creds_json = os.getenv("GOOGLE_CREDS")
+creds_dict = json.loads(creds_json)
+creds = service_account.Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
 client = gspread.authorize(creds)
 
 # 開啟 Google Sheet（換成你的試算表ID）
@@ -68,4 +80,6 @@ def submit():
     return render_template("done.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render 預設提供 PORT 變數
+    app.run(host="0.0.0.0", port=port)
+
