@@ -1,21 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>動脈FIT運動俱樂部</title>
+    <meta charset="UTF-8">
+    <title>動脈FIT運動俱樂部入場</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 40px; }
-        h1 { font-size: 3em; margin-bottom: 0.2em; }
-        p { font-size: 1.2em; color: #555; margin-top: 0; margin-bottom: 1.5em; }
-        input[type="text"] { font-size: 1.2em; padding: 8px; width: 250px; }
-        button { font-size: 1.2em; padding: 10px 20px; cursor: pointer; }
+    @font-face {
+        font-family: 'HanyiSentyPastel';
+        src: url('{{ url_for('static', filename='fonts/HanyiSentyPastel.ttf') }}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .HanyiSentyPastel {
+        font-family: 'HanyiSentyPastel', sans-serif;
+    }
+
+    body {
+        font-family: sans-serif;
+        text-align: center;
+        padding-top: 80px;
+    }
+
+    h1 {
+        font-size: 5em;
+        margin-bottom: 10px;
+    }
+
+    input[type=tel] {
+        font-size: 1.5em;
+        width: 220px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 1.2em;
+        padding: 10px 20px;
+        margin-top: 20px;
+    }
+
+    p.error {
+        color: red;
+    }
     </style>
 </head>
 <body>
-    <h1>動脈FIT運動俱樂部</h1>
+
+    <h1 class="HanyiSentyPastel">動脈FIT</h1>
     <p>請輸入您的手機號碼共十碼</p>
-    <form method="post">
-        <input type="text" name="phone" maxlength="10" minlength="10" pattern="\d{10}" required placeholder="09xxxxxxxx" autofocus><br><br>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="/">
+        <input type="tel" name="phone" pattern="0[0-9]{9}" placeholder="09xxxxxxxx" required inputmode="numeric" autocomplete="tel" autofocus>
+        <br>
         <button type="submit">送出</button>
     </form>
+
 </body>
 </html>

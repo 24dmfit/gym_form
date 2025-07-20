@@ -1,16 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8" />
     <title>入場完成</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 40px; }
-        h1 { font-size: 3em; color: green; }
-        a { font-size: 1.2em; color: #007bff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        @font-face {
+            font-family: 'HanyiSentyPastel';
+            src: url('/static/fonts/HanyiSentyPastel.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 80px 20px;
+            background: #fff;
+        }
+        h1 {
+            font-family: 'HanyiSentyPastel', cursive, sans-serif;
+            font-size: 72px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        button {
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <h1>入場完成</h1>
-    <p><a href="/">再次填寫</a></p>
+    <h1>歡迎您</h1>
+    <h2>入場完成！</h2>
+    <form action="/" method="get">
+        <button type="submit">再次填寫</button>
+    </form>
 </body>
 </html>

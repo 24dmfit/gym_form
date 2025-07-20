@@ -1,67 +1,196 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>動脈入場確認</title>
+    <meta charset="UTF-8">
+    <title>動脈運動俱樂部 - 入場資料確認</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 40px; max-width: 500px; margin: auto; }
-        h1 { font-size: 2.5em; margin-bottom: 0.2em; }
-        h2 { font-size: 1.5em; color: #333; margin-top: 0; margin-bottom: 20px; }
-        label { font-weight: bold; display: block; margin-top: 20px; margin-bottom: 8px; font-size: 1.1em; }
-        input[type="radio"] { margin-right: 8px; }
-        input[type="text"] { padding: 6px; font-size: 1em; width: 70%; margin-left: 10px; }
-        button { margin-top: 30px; padding: 12px 25px; font-size: 1.2em; cursor: pointer; background: #e53935; color: white; border: none; border-radius: 5px; }
-        .info { margin-top: 30px; font-size: 1em; color: #555; }
+        /* 你的CSS完全不動 */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 450px;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .input-group label {
+            margin-top: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+            white-space: nowrap;
+        }
+        .input-group input[type="text"] {
+            font-size: 1.2em;
+            width: 150px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        input[type=text] {
+            font-size: 1.2em;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .readonly {
+            background-color: #eee;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .purpose-btn {
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #999;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1em;
+            transition: 0.2s;
+        }
+        .purpose-btn.selected {
+            background-color: #d9534f;
+            color: white;
+            font-weight: bold;
+        }
+        .purpose-btn.selected::before {
+            content: '✔ ';
+        }
+        .hidden-textarea {
+            display: none;
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            resize: none;
+        }
+        button.submit {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1>歡迎 {{ name if name else "貴賓" }}</h1>
-    <h2>請選擇今日入場內容</h2>
-
-    <form action="/submit" method="post">
-        <input type="hidden" name="phone" value="{{ phone }}">
-
-        {% if is_new %}
-            <label for="name">姓名：</label>
-            <input type="text" name="name" id="name" value="" required>
-            <label for="coach">教練：</label>
-            <input type="text" name="coach" id="coach" value="" required>
+    <h1>
+        {% if name %}
+            歡迎 {{ name }} 回來！
         {% else %}
-            <p><strong>姓名：</strong> {{ name }}</p>
-            <input type="hidden" name="name" value="{{ name }}">
-            <p><strong>教練：</strong> {{ coach }}</p>
-            <input type="hidden" name="coach" value="{{ coach }}">
+            歡迎貴賓
         {% endif %}
+    </h1>
+
+    <form method="POST" action="/submit">
+        <input type="hidden" name="phone" value="{{ phone }}">
+        <input type="hidden" id="selected_purposes" name="purpose" value="">
+
+        <div class="row">
+            <div class="input-group">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name" value="{{ name }}" 
+                    {% if readonly %}readonly{% endif %}
+                    class="{% if readonly %}readonly{% endif %}" required>
+            </div>
+            <div class="input-group">
+                <label for="coach">教練：</label>
+                <input type="text" id="coach" name="coach" value="{{ coach }}" 
+                    {% if readonly %}readonly{% endif %}
+                    class="{% if readonly %}readonly{% endif %}" required>
+            </div>
+        </div>
 
         <label>今日入場內容：</label>
-        <input type="radio" name="purpose" value="諮詢/參觀" required> 諮詢/參觀<br>
-        <input type="radio" name="purpose" value="單次運動"> 單次運動<br>
-        <input type="radio" name="purpose" value="參加團課"> 參加團課<br>
-        <input type="radio" name="purpose" value="購買"> 購買：
-        <input type="text" name="custom"><br>
-        <input type="radio" name="purpose" value="他店武士進店"> 他店武士進店<br>
-        <input type="radio" name="purpose" value="其他"> 其他：
-        <input type="text" name="custom"><br>
+        <div class="button-grid">
+            <div class="purpose-btn" data-value="諮詢/參觀">諮詢/參觀</div>
+            <div class="purpose-btn" data-value="單次運動">單次運動</div>
+            <div class="purpose-btn" data-value="參加團課">參加團課</div>
+            <div class="purpose-btn expandable" data-value="購買">購買</div>
+            <div class="purpose-btn" data-value="他店武士進店">他店武士進店</div>
+            <div class="purpose-btn expandable" data-value="其他">其他</div>
+        </div>
 
-        <button type="submit">送出</button>
+        <div id="extra_purchase" class="hidden-textarea">
+            <label>購買內容：</label>
+            <textarea name="purchase_detail" rows="2" placeholder="請填寫購買品項"></textarea>
+        </div>
+
+        <div id="extra_other" class="hidden-textarea">
+            <label>其他內容：</label>
+            <textarea name="other_detail" rows="2" placeholder="請填寫其他說明"></textarea>
+        </div>
+
+        <button type="submit" class="submit">送出</button>
     </form>
 
-    <div class="info">
-        <p>目前時間：<span id="datetime"></span></p>
+    <script>
+        const buttons = document.querySelectorAll('.purpose-btn');
+        const selectedInput = document.getElementById('selected_purposes');
+        let selected = [];
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const value = btn.dataset.value;
+                const isSelected = btn.classList.contains('selected');
+
+                if (isSelected) {
+                    btn.classList.remove('selected');
+                    selected = selected.filter(item => item !== value);
+                } else {
+                    btn.classList.add('selected');
+                    selected.push(value);
+                }
+
+                if (btn.classList.contains('expandable')) {
+                    const extra = document.getElementById(`extra_${value === '購買' ? 'purchase' : 'other'}`);
+                    extra.style.display = isSelected ? 'none' : 'block';
+                }
+
+                selectedInput.value = selected.join(',');
+            });
+        });
+    </script>
+
+    <div style="margin-top: 30px; text-align: center; color: #666;">
+        <span id="datetime"></span>
     </div>
 
     <script>
         function updateDateTime() {
             const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth()+1).padStart(2,'0');
-            const d = String(now.getDate()).padStart(2,'0');
-            const hh = String(now.getHours()).padStart(2,'0');
-            const mm = String(now.getMinutes()).padStart(2,'0');
-            const ss = String(now.getSeconds()).padStart(2,'0');
-            document.getElementById('datetime').textContent = `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+            const formatted = now.toLocaleString('zh-TW', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('datetime').textContent = `目前時間：${formatted}`;
         }
-        setInterval(updateDateTime, 1000);
         updateDateTime();
+        setInterval(updateDateTime, 1000);
     </script>
+
 </body>
 </html>
