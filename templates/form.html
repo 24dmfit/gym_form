@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>動脈入場確認</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; max-width: 500px; margin: auto; }
+        h1 { font-size: 2.5em; margin-bottom: 0.2em; }
+        h2 { font-size: 1.5em; color: #333; margin-top: 0; margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-top: 20px; margin-bottom: 8px; font-size: 1.1em; }
+        input[type="radio"] { margin-right: 8px; }
+        input[type="text"] { padding: 6px; font-size: 1em; width: 70%; margin-left: 10px; }
+        button { margin-top: 30px; padding: 12px 25px; font-size: 1.2em; cursor: pointer; background: #e53935; color: white; border: none; border-radius: 5px; }
+        .info { margin-top: 30px; font-size: 1em; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>歡迎 {{ name if name else "貴賓" }}</h1>
+    <h2>請選擇今日入場內容</h2>
+
+    <form action="/submit" method="post">
+        <input type="hidden" name="phone" value="{{ phone }}">
+
+        {% if is_new %}
+            <label for="name">姓名：</label>
+            <input type="text" name="name" id="name" value="" required>
+            <label for="coach">教練：</label>
+            <input type="text" name="coach" id="coach" value="" required>
+        {% else %}
+            <p><strong>姓名：</strong> {{ name }}</p>
+            <input type="hidden" name="name" value="{{ name }}">
+            <p><strong>教練：</strong> {{ coach }}</p>
+            <input type="hidden" name="coach" value="{{ coach }}">
+        {% endif %}
+
+        <label>今日入場內容：</label>
+        <input type="radio" name="purpose" value="諮詢/參觀" required> 諮詢/參觀<br>
+        <input type="radio" name="purpose" value="單次運動"> 單次運動<br>
+        <input type="radio" name="purpose" value="參加團課"> 參加團課<br>
+        <input type="radio" name="purpose" value="購買"> 購買：
+        <input type="text" name="custom"><br>
+        <input type="radio" name="purpose" value="他店武士進店"> 他店武士進店<br>
+        <input type="radio" name="purpose" value="其他"> 其他：
+        <input type="text" name="custom"><br>
+
+        <button type="submit">送出</button>
+    </form>
+
+    <div class="info">
+        <p>目前時間：<span id="datetime"></span></p>
+    </div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth()+1).padStart(2,'0');
+            const d = String(now.getDate()).padStart(2,'0');
+            const hh = String(now.getHours()).padStart(2,'0');
+            const mm = String(now.getMinutes()).padStart(2,'0');
+            const ss = String(now.getSeconds()).padStart(2,'0');
+            document.getElementById('datetime').textContent = `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+</body>
+</html>

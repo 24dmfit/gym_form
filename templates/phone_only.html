@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>動脈FIT運動俱樂部</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 40px; }
+        h1 { font-size: 3em; margin-bottom: 0.2em; }
+        p { font-size: 1.2em; color: #555; margin-top: 0; margin-bottom: 1.5em; }
+        input[type="text"] { font-size: 1.2em; padding: 8px; width: 250px; }
+        button { font-size: 1.2em; padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>動脈FIT運動俱樂部</h1>
+    <p>請輸入您的手機號碼共十碼</p>
+    <form method="post">
+        <input type="text" name="phone" maxlength="10" minlength="10" pattern="\d{10}" required placeholder="09xxxxxxxx" autofocus><br><br>
+        <button type="submit">送出</button>
+    </form>
+</body>
+</html>
